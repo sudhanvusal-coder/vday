@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --valentine-red: #ff4d6d;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #ffdee9 0%, #b5fffc 100%);
+        }
+
+        #play-zone {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0); 
+            padding: 2.5rem;
+            border-radius: 50px;
+            box-shadow: 
+                20px 20px 60px rgba(0, 0, 0, 0.05), 
+                -20px -20px 60px rgba(255, 255, 255, 0.4);
+            z-index: 10;
+            max-width: 90%;
+            width: 420px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            animation: softBounce 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes softBounce {
+            0% { transform: scale(0.5); opacity: 0; }
+            60% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #success-card {
+            display: none;
+            position: absolute;
+            transform: translateY(100vh);
+            opacity: 0;
+        }
+
+        #success-card.active {
+            display: flex;
+            transform: translateY(0);
+            opacity: 1;
+            animation: slideUpBounce 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes slideUpBounce {
+            from { transform: translateY(100vh); }
+            to { transform: translateY(0); }
+        }
+
+        .gif-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        img {
+            width: 220px;
+            height: auto;
+            border-radius: 30px;
+            box-shadow: 10px 10px 20px rgba(0,0,0,0.05);
+        }
+
+        /* Updated Heading Styles for two lines */
+        .question-line-1 { 
+            color: #444; 
+            font-size: 1.4rem; 
+            margin: 0; 
+            font-weight: 500;
+        }
+        .question-line-2 { 
+            color: var(--valentine-red); 
+            font-size: 1.8rem; 
+            margin: 5px 0 25px 0; 
+            text-shadow: 1px 1px 0px white;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            width: 100%;
+        }
+
+        button {
+            padding: 14px 35px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            color: white;
+            background: var(--valentine-red);
+            box-shadow: 5px 5px 15px rgba(255, 77, 109, 0.4), 
+                        -5px -5px 15px rgba(255, 255, 255, 0.8);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #noBtn {
+            position: absolute;
+            z-index: 999;
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1);
+        }
+
+        .heart {
+            position: absolute;
+            color: var(--valentine-red);
+            font-size: 20px;
+            animation: float 4s linear infinite;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(110vh) scale(1); opacity: 1; }
+            100% { transform: translateY(-20vh) scale(1.5); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="play-zone">
+        <div id="main-card" class="container">
+            <div class="gif-container">
+                <img src="https://media.tenor.com/mmsvp_XJVVwAAAA1/milk-and-mocha.webp" alt="Begging Bear">
+            </div>
+            <p class="question-line-1">ए मेरी पुकुली,</p>
+            <h1 class="question-line-2">Will you be my Valentine?❤️</h1>
+            <div class="btn-group">
+                <button id="yesBtn">Yes</button>
+                <div style="width: 100px;"></div> 
+            </div>
+        </div>
+
+        <button id="noBtn">No</button>
+
+        <div id="success-card" class="container">
+            <div class="gif-container">
+                <img src="https://media.tenor.com/86RT3WNncSsAAAAM/milk-and-mocha-hug.gif" alt="Celebration Hug">
+            </div>
+            <h1>YAY!!! I love you! ❤️</h1>
+            <p id="specialMessage" style="color: #444; font-weight: 500; font-size: 1.2rem;"></p>
+        </div>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const mainCard = document.getElementById('main-card');
+        const successCard = document.getElementById('success-card');
+        const specialMessage = document.getElementById('specialMessage');
+
+        function resetNoButton() {
+            const rect = yesBtn.getBoundingClientRect();
+            noBtn.style.left = (rect.right + 20) + "px";
+            noBtn.style.top = rect.top + "px";
+        }
+
+        window.onload = resetNoButton;
+        window.onresize = resetNoButton;
+
+        function getMessage() {
+            const now = new Date();
+            const dateStr = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`;
+            const schedule = {
+                "2/9/2026": "Happy Amul Dark Chocolate Day Maya.",
+                "2/10/2026": "Happy Teddy Day. You can always cuddle with me thinking I am the only teddy you want to cuddle with.",
+                "2/11/2026": "Happy Promise Day Maya, I promise to be with you for ever and ever.",
+                "2/12/2026": "Happy Hug Day Maya. May all your sorrows be gone while I hug you tightly.",
+                "2/13/2026": "Happy Kiss Day Maya. When will we get this opportunity to kiss each other without any hesitation?",
+                "2/14/2026": "Happy Valentines Day Maya. I love you to the moon and back."
+            };
+            const valentineEnd = new Date(2026, 1, 14); 
+            if (now > valentineEnd && dateStr !== "2/14/2026") {
+                return "Maya, The Valentines Week is over. But My love for you is never over. Its increasing exponentially every day.";
+            }
+            return schedule[dateStr] || "I knew you would say yes! I love you so much! ❤️";
+        }
+
+        function moveNoButton() {
+            const padding = 60;
+            const winWidth = window.innerWidth;
+            const winHeight = window.innerHeight;
+            const newLeft = Math.random() * (winWidth - noBtn.offsetWidth - padding) + (padding / 2);
+            const newTop = Math.random() * (winHeight - noBtn.offsetHeight - padding) + (padding / 2);
+
+            noBtn.style.left = `${newLeft}px`;
+            noBtn.style.top = `${newTop}px`;
+
+            const currentScale = parseFloat(yesBtn.style.transform.replace('scale(', '')) || 1;
+            yesBtn.style.transform = `scale(${currentScale + 0.15})`;
+        }
+
+        noBtn.addEventListener('mouseover', moveNoButton);
+        noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNoButton(); });
+
+        yesBtn.addEventListener('click', () => {
+            mainCard.style.opacity = '0';
+            mainCard.style.transform = 'scale(0.8)';
+            noBtn.style.display = 'none';
+
+            setTimeout(() => {
+                mainCard.style.display = 'none';
+                successCard.style.display = 'flex';
+                setTimeout(() => {
+                    successCard.classList.add('active');
+                    specialMessage.innerText = getMessage();
+                }, 50);
+
+                for(let i=0; i<85; i++) { 
+                    setTimeout(createHeart, i * 40);
+                }
+            }, 400);
+        });
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 35 + 20) + 'px';
+            heart.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 4000);
+        }
+        setInterval(createHeart, 350);
+    </script>
+</body>
+</html>
